@@ -283,7 +283,9 @@ data <- data %>%
 data
 ```
 
-The below code calculates the sum of NA values in each column of the "data" data frame through the -sum(is,na(.)) part of code. The summarize() function
+The below code calculates the sum of NA values in each column of the "data" data frame through the -sum(is,na(.)) part of code. The summarize() function summarizes the output and creates a new data frame.
+
+The pivot_longer() function changes the output from a wide to a long format and columns "column_names" and "na_count" are added to the output. Finally the arrange() function arranges data in the ascending value of NA count.
 
 ```{r}
 data |>
@@ -292,6 +294,8 @@ data |>
   arrange(na_count)
 ```
 
+The below code does the same as the above one expect that row number 8 is removed from the data frame using the select() function.
+
 ```{r}
 data.bser.removed <- data %>%
   select(-8) %>%
@@ -299,15 +303,21 @@ data.bser.removed <- data %>%
 data.bser.removed
 ```
 
+The data data frame in the below code will retain only the columns that do not have "bser" in their names, effectively removing columns with names containing that term.
+
 ```{r}
 data <- data %>%
   select(-matches("bser"))
 ```
 
+The mistaken variable in the code is a numeric vector that contains the values 2, 3, 4, and "?". However, because one of the values is a character (the "?"), R will coerce all the values in the vector to characters, making it a character vector.
+
 ```{r}
 mistaken <- c(2, 3, 4, "?")
 class(mistaken)
 ```
+
+The mistaken character vector is fixed by converting it into an integer vector using the parse_integer() function from the readr package. Additionally, it specifies that the "?" character should be treated as NA (missing value).
 
 ```{r}
 fixed <- parse_integer(mistaken, na = '?')
@@ -318,12 +328,16 @@ fixed
 class(fixed)
 ```
 
+This code should load the "algae" dataset and display the 48th row of data from the "algae" dataset.
+
 ```{r}
 install.packages("DMwR2")
 library(DMwR2)
 data(algae, package = "DMwR2")
 algae[48,]
 ```
+
+The below code initializes a ggplot2 using the "algae" dataset using the mxPH variable as the sample data. The geom_qq_band() function adds a shaded region representing the confidence intervals. The stat_qq_point() function adds points to the qq plots to represent the observed quantiles of the mxPH variables. This plot allows to visually assess wether the data follows a normal distribution. The reference line helps you identify deviations from normality.
 
 ```{r}
 # plot a QQ plot of mxPH
@@ -336,11 +350,15 @@ ggplot(algae, aes(sample = mxPH)) +
   ggtitle("Normal QQ plot of mxPH") 
 ```
 
+The below line of code imputes any missing values from the 48th row with the mean of the mxPH variable.
+
 ```{r}
 algae <- algae |>
   mutate(mxPH = ifelse(row_number() == 48, mean(mxPH, na.rm = TRUE), mxPH))
 algae
 ```
+
+The below code plots the same QQ plot as before but with the variable "Chla"
 
 ```{r}
 ggplot(algae, aes(sample = Chla)) +
