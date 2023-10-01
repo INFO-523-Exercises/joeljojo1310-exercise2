@@ -1,31 +1,35 @@
----
+------------------------------------------------------------------------
 
 ---
-title: "exercise2"
+title: "Exercise 2"
 format: html
 editor: visual
+author: Joel Jojo
 ---
 
-## Quarto
+## Summary
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+Topics included in this exercise are data submission, package installation, data loading, cleaning, scaling, correlations, dimensionality reduction, sampling, and handling text datasets.
 
-## Running Code
+Submission: How to submit data for analysis.
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+Installing Required Packages: Installing and managing R packages.
 
-```{r}
-1 + 1
-```
+Loading Data: Importing datasets into R.
 
-You can add options to executable code like this
+Data Cleaning: Removing inconsistencies and errors in data.
 
-```{r}
-#| echo: false
-2 * 2
-```
+Scaling and Normalization: Standardizing data for analysis.
 
-The `echo: false` option disables the printing of code (only output is displayed).
+Variable Correlations and Dimensionality Reduction: Analyzing feature relationships and reducing dimensions.
+
+Sampling: Methods for selecting representative data subsets.
+
+Handling Text Datasets: Techniques for working with text-based data.
+
+## Code
+
+The below code installs the "pacman" package which helps in packet installation and management in R.
 
 ```{r}
 # First run this
@@ -47,12 +51,21 @@ p_load(DBI, # DBI databases
        tm) 
 ```
 
+#### LOADING DATA
+
+**In the below section we practice loading data from a .csv or .txt file making them available for analysis and other purposes.**
+
+The below code reads the x.csv file into "data" data frame using the read_csv() function.
+
+data \|\> glimpse() line passes the data frame into the glimpse() function which then displays a concise summary of the data frame's structure.
+
 ```{r}
 data <- read_csv(here("data", "x.csv"))
 
 data |> glimpse()
-
 ```
+
+The below code reads a tab delimited file from the "data" directory using read_delim() function. Then the glimpse function produces a summary of the data frame.
 
 ```{r}
 data <- read_delim(here("data", "x.tsv"))
@@ -60,9 +73,27 @@ data <- read_delim(here("data", "x.tsv"))
 data |> glimpse()
 ```
 
+Unable to recreate **Importing data from MySQL database** section since the connection to MySQL isn't getting established.\
+\
+
+#### DATA CLEANING
+
+**In the below section we will be experimenting with data cleaning methods wherein we identify and correct errors, inconsistencies and missing values.**
+
+\
+The below code loads the wide.txt file into the "wide" data frame and using the delimiter " " it skips the first row of data. The col_names parameter provides custom column names to the data frame.
+
 ```{r}
 wide <- read_delim(here("data", "wide.txt"), delim = " ", skip = 1, col_names = c("Name", "Math", "English", "Degree_Year"))
 ```
+
+The below code converts the data frame from a wide format to a long format.
+
+cols = c(Math, English) line helps pivot the columns (Math, English) from a wide to a long format.
+
+names_to = "Subject" line specifies that there will be a new column by the name "Subject" which will have the above columns as values.
+
+values_to = "Grade" line specifies that there will be a new column by the name "Grade" which will have the grades corresponding to each subject.
 
 ```{r}
 long <- wide |>
@@ -72,11 +103,21 @@ long <- wide |>
 long
 ```
 
+In the below code we change the data frame from a long format to a wide format.
+
+names_from = Subject argument specifies that the values in "Subject" column can be used as columns in the new data frame.
+
+values_from = Grade argument specifies that the values in the "Grade" column should be used as the values for the new columns in the data frame.
+
 ```{r}
 wide <- long %>%
   pivot_wider(names_from = Subject, values_from = Grade)
 wide
 ```
+
+The below code uses the separate() function to separate the column "Degree_Year" into two new columns "Degree" and "Year".
+
+The values in the column will be separated using the underscore (\_) as the separator.
 
 ```{r}
 clean <- long %>%
@@ -90,28 +131,48 @@ install.packages("lubridate")
 library(lubridate)
 ```
 
+The below code enters date in different formats into mixed.dates data frame.
+
+It is then put into the ymd() function which then converts all the dates to a year-month-date format
+
 ```{r}
 mixed.dates <- c(20140123, "2019-12-12", "2009/5/1",
  "measured on 2002-12-06", "2018-7/16")
 clean.dates <- ymd(mixed.dates) #convert to year-month-day format
 clean.dates
+
 ```
+
+The below code uses various functions of the lubridate package to clean and extract date information.
+
+The wday() function extracts the numeric representation of the day of the week(1 for sunday, 2 for monday etc.). If the same function has the label argument set to TRUE then it provides the label for the day of the week.\
+year() function extracts the year information from the date.
+
+month() function extracts the month information from the date.
 
 ```{r}
 data.frame(Dates = clean.dates, WeekDay = wday(clean.dates), nWeekDay = wday(clean.dates, label = TRUE), Year = year(clean.dates), Month = month(clean.dates, label = TRUE))
 ```
 
+The below code contains assigns the Asia/Shanghai equivalent value of "20190203 03:00:03" to date.time
+
 ```{r}
 date.time <- ymd_hms("20190203 03:00:03", tz="Asia/Shanghai")
 ```
+
+The below code changes the date.time value using the with_tz() function to America/Phoenix time.
 
 ```{r}
 with_tz(date.time, tz="America/Phoenix")
 ```
 
+The below code utilizes the force_tz() function to forcefully change the date.time value from Phoenix time to Turkey time
+
 ```{r}
 force_tz(date.time, "Turkey")
 ```
+
+The below code returns a list of timezones which can be used further while working on timezones.
 
 ```{r}
 OlsonNames()
@@ -124,11 +185,17 @@ library(stringr)
 library(readr)
 ```
 
+The variable uci.repo stores a character string representing the base URL of the UCI Machine Learning Repository. The base URL hosts different ML datasets.
+
+The "dataset" variable stores a dataset, specifically "audiology" from the ML repository.
+
 ```{r}
 uci.repo <-"http://archive.ics.uci.edu/ml/machine-learning-databases/"
 
 dataset <- "audiology/audiology.standardized"
 ```
+
+The below code uses the str_c() function to concatenate three strings together. This helps achieve complete access to the data and associated variable names for the specified dataset in the UCI Machine Learning directory.
 
 ```{r}
 dataF <- str_c(uci.repo, dataset, ".data")
@@ -136,13 +203,19 @@ namesF <- str_c(uci.repo, dataset, ".names")
 dataF
 ```
 
+This line of code reads the first row of data without considering them as columns (col_names= FALSE) and the missing values "?" are replaced with NA. The url() function helps create a connection to the specified URL.
+
 ```{r}
 data <- read_csv(url(dataF), col_names = FALSE, na="?")
 ```
 
+The below code returns the dimensions(number of rows, number of columns) of the "data" data frame using the dim() function.
+
 ```{r}
 dim(data)
 ```
+
+The below code reads the text content from the URL provided as an argument and stores it in the "lines" variable of which a few lines are displayed using the head() function.
 
 ```{r}
 lines <- read_lines(url(namesF))
@@ -150,15 +223,21 @@ lines <- read_lines(url(namesF))
 lines |> head()
 ```
 
+The below code reads the lines 67 through 135 and displays it through the "names" variable.
+
 ```{r}
 names <- lines[67:135]
 names
 ```
 
+This line of code uses the str_split_fixed() function to split the names vector whenever it encounters a ":" character and the 2 argument indicates that it should split each element imto at most two parts.
+
 ```{r}
 names <- str_split_fixed(names, ":", 2) #split on regular expression pattern ":", this function returns a matrix
 names
 ```
+
+The below code selects the first column and it's set of values and displays it
 
 ```{r}
 names <- names[,1]
@@ -170,15 +249,23 @@ names <-str_trim(names) |> str_replace_all("\\(|\\)", "") # we use a pipe, and a
 names
 ```
 
+The below code sets the names to the columns from 1 to 69. It takes the first 69 columns and assigns the corresponding values from the "names" vector.
+
+This is a common step in data analysis to ensure that the columns of the data frame have meaningful names associated with the variables they represent.
+
 ```{r}
 colnames(data)[1:69] <- names
 data
 ```
 
+The below line of code assigns the column name "id" to column 70 and name "class" to column 71.
+
 ```{r}
 colnames(data)[70:71] <- c("id", "class")
 data
 ```
+
+The below code helps filter out the rows with one or more missing values using the filter() and !complete.cases() function. These rows can further be handled through removal, imputation or other methods.
 
 ```{r}
 library(dplyr)
@@ -188,11 +275,15 @@ missing.value.rows <- data |>
 missing.value.rows
 ```
 
+The below line of code creates a new column with the help of the mutate() function with the name "na_count". This new column calculates the sum of NA values in each row. This helps in understanding data quality in each row.
+
 ```{r}
 data <- data %>%
   mutate(na_count = rowSums(is.na(data)))
 data
 ```
+
+The below code calculates the sum of NA values in each column of the "data" data frame through the -sum(is,na(.)) part of code. The summarize() function
 
 ```{r}
 data |>
