@@ -892,7 +892,7 @@ summary(sample)
 
 The first line defines a vector called "age" containing a list of ages. Then the kmeans function performs k-means clustering on the "age" vector, where 3 is specified as the number of clusters to form.
 
-s\$cluster: This extracts the cluster assignments from the result of the k-means clustering and stores them in the "cluster" vector.
+s\$cluster: This extracts the cluster assignments from the result of the k-means clustering and stores them in the "cluster" vector. Th b==
 
 The result is a vector called "s\$cluster" that contains cluster assignments for each age in the "age" vector.
 
