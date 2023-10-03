@@ -31,7 +31,7 @@ Handling Text Datasets: Techniques for working with text-based data.
 
 The below code installs the "pacman" package which helps in packet installation and management in R.
 
-```{r}
+```{r, error=TRUE}
 # First run this
 install.packages("pacman")
 ```
@@ -126,7 +126,7 @@ clean <- long %>%
 clean
 ```
 
-```{r}
+```{r, error=TRUE}
 install.packages("lubridate")
 library(lubridate)
 ```
@@ -217,7 +217,7 @@ dim(data)
 
 The below code reads the text content from the URL provided as an argument and stores it in the "lines" variable of which a few lines are displayed using the head() function.
 
-```{r}
+```{r, error=TRUE}
 lines <- read_lines(url(namesF))
 
 lines |> head()
@@ -267,7 +267,7 @@ data
 
 The below code helps filter out the rows with one or more missing values using the filter() and !complete.cases() function. These rows can further be handled through removal, imputation or other methods.
 
-```{r}
+```{r,error=TRUE}
 library(dplyr)
 
 missing.value.rows <- data |>
@@ -330,7 +330,7 @@ class(fixed)
 
 This code should load the "algae" dataset and display the 48th row of data from the "algae" dataset.
 
-```{r}
+```{r, error=TRUE}
 install.packages("DMwR2")
 library(DMwR2)
 data(algae, package = "DMwR2")
@@ -339,7 +339,7 @@ algae[48,]
 
 The below code initializes a ggplot2 using the "algae" dataset using the mxPH variable as the sample data. The geom_qq_band() function adds a shaded region representing the confidence intervals. The stat_qq_point() function adds points to the qq plots to represent the observed quantiles of the mxPH variables. This plot allows to visually assess wether the data follows a normal distribution. The reference line helps you identify deviations from normality.
 
-```{r}
+```{r, error=TRUE}
 # plot a QQ plot of mxPH
 install.packages("car")
 library(car)
@@ -360,7 +360,7 @@ algae
 
 The below code plots the same QQ plot as before but with the variable "Chla"
 
-```{r}
+```{r, error=TRUE}
 ggplot(algae, aes(sample = Chla)) +
   geom_qq_band() +
   stat_qq_point() +
@@ -458,7 +458,7 @@ The below code utilizes a ggplot to portray a residual plot, which is a tool for
 
 This plot allows to visually inspect whether the residuals are randomly distributed around zero, which is a key assumption for linear regression
 
-```{r}
+```{r, error=TRUE}
 ggplot(data = data.frame(oPO4 = m$model$oPO4, res = res), aes(x = oPO4, y = res)) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
@@ -513,7 +513,7 @@ getAnywhere(knnImputation())
 
 **Scaling and normalization are data preprocessing techniques used to transform the features or variables in a dataset to make them suitable for machine learning algorithms.**
 
-```{r}
+```{r, error=TRUE}
 library(dplyr)
 library(palmerpenguins)
 ```
@@ -600,7 +600,7 @@ summary(Boston$newAge)
 
 After running this code, we will have a modified "Boston" dataset with a new "newAge" column containing the binning results based on equal-depth bins. The table will show the distribution of observations across these bins, providing insights into how the "age" values are distributed in the dataset.
 
-```{r}
+```{r, error=TRUE}
 
 install.packages("Hmisc")
 library(Hmisc)
@@ -763,7 +763,7 @@ cbind(mod.3$data, fitted(mod.3))
 
 The code first removes rows with missing values and then calculates the correlation matrix for the remaining data. This can be useful for exploring the relationships between variables and identifying patterns in the data.
 
-```{r}
+```{r, error=TRUE}
 library(tidyr) # data manipulation
 penguins_numeric |> 
   drop_na() |>
@@ -808,7 +808,7 @@ peng.reduced <- data.frame(pca$scores[,1:3], Species = penguins_na$species)
 head(peng.reduced)
 ```
 
-```{r}
+```{r, error=TRUE}
 install.packages("wavelets")
 library(wavelets)
 ```
@@ -909,7 +909,7 @@ cluster(ageframe, clustername = "condition", size = 2): This line uses the clust
 
 The result is a subset of the data frame "ageframe," containing data points belonging to two of the three clusters obtained from the k-means clustering.
 
-```{r}
+```{r, error=TRUE}
 ageframe <- data.frame(age)
 ageframe$condition <- s$cluster # add cluster label as condition
 cluster(ageframe, clustername = "condition", size = 2) # select 2 clusters out of the three
