@@ -509,6 +509,10 @@ Here, the getAnywhere() function displays the source code of the knnImputation()
 getAnywhere(knnImputation())
 ```
 
+#### SCALING AND NORMALIZATION
+
+**Scaling and normalization are data preprocessing techniques used to transform the features or variables in a dataset to make them suitable for machine learning algorithms.**
+
 ```{r}
 library(dplyr)
 library(palmerpenguins)
@@ -685,6 +689,10 @@ as.vector() converts the transposed matrix into a vector, concatenating all the 
 (age_bin_mean_smoothed = round(as.vector(t(bins)), 2))
 ```
 
+#### **Variable correlations and dimensionality reduction**
+
+**Variable correlations help us understand relationships between variables, while dimensionality reduction techniques allow us to simplify complex datasets by reducing the number of variables while retaining meaningful information.**
+
 'test1 = chisq.test(racetable, correct=F)' This line performs a chi-squared test of independence using the "racetable" matrix. 'correct = F' specifies that no correction for continuity should be applied.
 
 ```{r}
@@ -839,6 +847,10 @@ xt
 ```{r}
 idwt(xt)
 ```
+
+#### SAMPLING
+
+**Sampling is a statistical process of selecting a subset of individuals or items from a larger population or dataset for the purpose of making inferences or observations about the population.**
 
 set.seed(1) sets the seed for the random number generator.
 
