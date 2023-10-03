@@ -59,7 +59,7 @@ The below code reads the x.csv file into "data" data frame using the read_csv() 
 
 data \|\> glimpse() line passes the data frame into the glimpse() function which then displays a concise summary of the data frame's structure.
 
-```{r}
+```{r, error=TRUE}
 data <- read_csv(here("data", "x.csv"))
 
 data |> glimpse()
@@ -67,7 +67,7 @@ data |> glimpse()
 
 The below code reads a tab delimited file from the "data" directory using read_delim() function. Then the glimpse function produces a summary of the data frame.
 
-```{r}
+```{r, error=TRUE}
 data <- read_delim(here("data", "x.tsv"))
 
 data |> glimpse()
@@ -83,7 +83,7 @@ Unable to recreate **Importing data from MySQL database** section since the conn
 \
 The below code loads the wide.txt file into the "wide" data frame and using the delimiter " " it skips the first row of data. The col_names parameter provides custom column names to the data frame.
 
-```{r}
+```{r, error=TRUE}
 wide <- read_delim(here("data", "wide.txt"), delim = " ", skip = 1, col_names = c("Name", "Math", "English", "Degree_Year"))
 ```
 
@@ -205,7 +205,7 @@ dataF
 
 This line of code reads the first row of data without considering them as columns (col_names= FALSE) and the missing values "?" are replaced with NA. The url() function helps create a connection to the specified URL.
 
-```{r}
+```{r, error=TRUE}
 data <- read_csv(url(dataF), col_names = FALSE, na="?")
 ```
 
@@ -287,7 +287,7 @@ The below code calculates the sum of NA values in each column of the "data" data
 
 The pivot_longer() function changes the output from a wide to a long format and columns "column_names" and "na_count" are added to the output. Finally the arrange() function arranges data in the ascending value of NA count.
 
-```{r}
+```{r, error=TRUE}
 data |>
   summarize(across(everything(), ~sum(is.na(.)), .names = "na_{.col}")) %>%
   pivot_longer(everything(), names_to = "column_name", values_to = "na_count") %>%
