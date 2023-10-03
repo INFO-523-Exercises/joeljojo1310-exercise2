@@ -368,18 +368,26 @@ ggplot(algae, aes(sample = Chla)) +
   ggtitle("Normal QQ plot of Chla") 
 ```
 
+The below code gives the median value of the "Chla" variable in the dataset, which provides a measure of the central tendency of the non-missing values in that variable.
+
 ```{r}
 median(algae$Chla, na.rm = TRUE)
 ```
+
+The below code provides the mean value of the "Chla" variable in the dataset, based on the non-missing values. It provides a measure of the central tendency of the data.
 
 ```{r}
 mean(algae$Chla, na.rm = TRUE)
 ```
 
+The below code removes missing values from Chla variable and replaces it with the median of the non missing values from the Chla column. This common technique for imputing missing data helps make the dataset more complete for analysis.
+
 ```{r}
 algae <- algae |>
   mutate(Chla = if_else(is.na(Chla), median(Chla, na.rm = TRUE), Chla))
 ```
+
+The below code assigns the columns 4 to 18 to the to the variable algae_numeric and then the NA values are removed using the drop_na() function. Finally a correlation matrix of the numeric variables in algae_numeric using correlate() function. This is finally plotted using the plot() function.
 
 ```{r}
 algae_numeric <- algae[, 4:18] %>%
@@ -392,6 +400,10 @@ cor_matrix <- algae_numeric |> correlate() |> plot()
 cor_matrix
 ```
 
+The below code filters out rows where the missing values percentage exceeds 20%. This is then used in a linear regression model where the dependant variable is PO4 and the independant variable is oPO4.
+
+lm(formula = PO4 \~ oPO4, data = algae) is the linear regression model formula used.
+
 ```{r}
 algae <- algae %>%
   filter(rowSums(is.na(.)) / ncol(.) < 0.2)#this is a method provided that selects the observations with 20% or move values as NAs. 
@@ -400,10 +412,14 @@ m = lm(PO4 ~ oPO4, data = algae)
 lm(formula = PO4 ~ oPO4, data = algae)
 ```
 
+The summary() function here provides a desciprtion of the linear regressoin model object, including coefficients, standard errors and other predictors that describes the model's fit.
+
 ```{r}
 m |> 
   summary()
 ```
+
+The tidy() function represents the linear regerssion object model in a tabular and organized manner, making it easier to work with the results of the regression model.
 
 ```{r}
 m |> 
@@ -411,14 +427,24 @@ m |>
   tidy()
 ```
 
+By using algae\$PO4, we retrieve and access the values of the "PO4" variable from the "algae" dataset.
+
 ```{r}
 algae$PO4
 ```
+
+Here, the PO4 variable is mutated with the help of the mutate function. The 28th row in the PO4 variable is replaced with a new value based on arithmetic operation on the oPO4 variable. This is a way to conditionally update a specific row in a data frame based on a row number.
 
 ```{r}
 algae <- algae %>%
   mutate(PO4 = ifelse(row_number() == 28, 42.897 + 1.293 * oPO4, PO4))
 ```
+
+the resid() function here calculates the residuals of the linear regression model m. Residuals represent the differences between the observed values and the values predicted by the model.
+
+algae %\>% filter(row_number() != 28): it creates a reduced dataset without the 28th row.
+
+The pull() function is used to extract the values of the "oPO4" variable from the filtered dataset and assigns them to the oPO4_reduced variable.
 
 ```{r}
 res = resid(m)
@@ -427,6 +453,10 @@ oPO4_reduced <- algae %>%
   filter(row_number() != 28) %>%
   pull(oPO4)
 ```
+
+The below code utilizes a ggplot to portray a residual plot, which is a tool for assessing the assumptions of a linear regression model. The aes() function specifies that "oPO4" (predictor variable) should be plotted on the x-axis and "res" (containing residuals) should be plotted on the y-axis.
+
+This plot allows to visually inspect whether the residuals are randomly distributed around zero, which is a key assumption for linear regression
 
 ```{r}
 ggplot(data = data.frame(oPO4 = m$model$oPO4, res = res), aes(x = oPO4, y = res)) +
@@ -439,6 +469,8 @@ ggplot(data = data.frame(oPO4 = m$model$oPO4, res = res), aes(x = oPO4, y = res)
   )
 ```
 
+When the function fillPO4(x) is called, it will return a modified version of the input vector x where missing values have been replaced with values calculated using the formula 42.897 + 1.293 \* x. This function is useful for imputing missing values in numeric variables based on a specified formula or calculation.
+
 ```{r}
 fillPO4 <- function(x) {
   if_else(is.na(x), 42.897 + 1.293 * x, x)
@@ -446,14 +478,21 @@ fillPO4 <- function(x) {
 #if x is not NA, return 42.897+1.293*x 
 ```
 
+In the below code the sapply() function applies the previously created function fillPO4 to the values in the oPO4 column of the selected rows(where "PO4" is missing)
+
 ```{r}
 algae[is.na(algae$PO4), "PO4"] <- sapply(algae[is.na(algae$PO4), "oPO4"], fillPO4)
 ```
+
+The function manyNAs() from the "DMwR2" package helps identify which rows have a significant amount of missing data. After running this code the "algae" dataset will be modified to exclude rows with a substantial amount of missing data.
 
 ```{r}
 data(algae, package="DMwR2")
 algae <- algae[-manyNAs(algae), ] 
 ```
+
+The below code mainly utilizes the knnImputation() function which takes the weighted average of k (k=10) most similar samples to impute missing values. Then the dataset with missing values are reloaded again and the rows with many missing values are filtered out. \
+Finally the knnImputation() function is used to impute missing values with the median of the k (k=10) most similar samples.
 
 ```{r}
 algae <- knnImputation(algae, k = 10) #use the weighted average of k most similar samples
@@ -463,6 +502,8 @@ data(algae, package="DMwR2") #get data again so there are unknown values
 algae <- algae[-manyNAs(algae), ] 
 algae <- knnImputation(algae, k = 10, meth="median") #use the median of k most similar samples
 ```
+
+Here, the getAnywhere() function displays the source code of the knnImputation() function.
 
 ```{r}
 getAnywhere(knnImputation())
@@ -477,6 +518,8 @@ library(palmerpenguins)
 data(penguins)
 ```
 
+The below code selects the numeric columns from the penguins dataset and normalizes it using scale() function. Finally, the as.data.frame() function converts the normalized dataset into a data frame and a species column from the original dataset is added to it. This normalized data frame can be used for ML algorithms and analysis that require standardized intputs.
+
 ```{r}
 # select only numeric columns
 penguins_numeric <- select(penguins, bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g)
@@ -490,13 +533,19 @@ peng.norm <- cbind(as.data.frame(penguins_norm), species = penguins$species)
 # because scale() takes numeric matrix as input, we first remove Species column, then use cbind() to add the column back after normalization.
 ```
 
+Summary of penguins dataset
+
 ```{r}
 summary(penguins)
 ```
 
+Summary of the peng.norm data frame
+
 ```{r}
 summary(peng.norm)
 ```
+
+The below code selects the max and min values from the penguins dataset excluding the species column (since it has characters in it) and also while avoiding NA values.
 
 ```{r}
 max <- apply(select(penguins, -species), 2, max, na.rm=TRUE)
@@ -512,6 +561,8 @@ min
 
 ```
 
+The below code utilizes the lapply() function to apply a function to each column of the "penguins_numeric" dataset. The function (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE)) performs a min-max scaling on each column. The penguin_scaled dataset is binded with the species column using the cbind() function. FInally, the summary of the data frame is displayed.
+
 ```{r}
 # min-max normalization
 penguin_scaled <- as.data.frame(lapply(penguins_numeric, function(x) (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))))
@@ -520,6 +571,8 @@ penguin_scaled <- cbind(penguins_norm, species = penguins$species)
 
 summary(penguin_scaled)
 ```
+
+Here, the Boston dataset from the package "MASS" is loaded and the summary of the age column in the dataset is displayed.
 
 ```{r}
 data(Boston, package="MASS")
