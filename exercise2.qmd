@@ -892,7 +892,7 @@ summary(sample)
 
 The first line defines a vector called "age" containing a list of ages. Then the kmeans function performs k-means clustering on the "age" vector, where 3 is specified as the number of clusters to form.
 
-s\$cluster: This extracts the cluster assignments from the result of the k-means clustering and stores them in the "cluster" vector. Th b==
+s\$cluster: This extracts the cluster assignments from the result of the k-means clustering and stores them in the "cluster" vector.
 
 The result is a vector called "s\$cluster" that contains cluster assignments for each age in the "age" vector.
 
@@ -915,4 +915,6 @@ ageframe$condition <- s$cluster # add cluster label as condition
 cluster(ageframe, clustername = "condition", size = 2) # select 2 clusters out of the three
 ```
 
-Unable to recreate the **Handling Text Datasets** since I'm getting error "Error in DirSource("Documents"): empty directory"
+Unable to recreate the **Handling Text Datasets** since I'm getting error "Error in DirSource("Documents"): empty directory".
+
+Note: Unable to render qmd file due to an uncertain error.
